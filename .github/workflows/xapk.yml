@@ -12,6 +12,11 @@ on:
           - 'EN'
           - 'JP'
           - 'KR'
+      lite_mode:
+        description: 'Lite Mode (Only output MOD APK, no OBB)'
+        required: true
+        type: boolean
+        default: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,6 +41,8 @@ jobs:
           yes | sdkmanager --install "build-tools;35.0.0"
       
       - name: Build APK
+        env:
+          LITE_MODE: ${{ github.event.inputs.lite_mode }}
         run: |
           chmod +x merge_build.sh
           ./merge_build.sh "${{ github.event.inputs.region }}"

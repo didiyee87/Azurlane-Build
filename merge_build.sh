@@ -590,7 +590,7 @@ PRINT_LOGO() {
 EOF
 }
 
-# 主执行函数
+# 主執行函數
 main() {
     PRINT_LOGO
     CHECK_PARAM
@@ -612,7 +612,16 @@ main() {
         BUILD_APK
         OPTIMIZE_AND_SIGN_APK
         GET_GAME_VERSION
-        REPACK_XAPK
+        
+        if [ "${LITE_MODE}" = "true" ]; then
+            echo "Lite 模式已啟用：跳過 XAPK 重新打包，僅保留 APK。"
+            # 將 APK 重命名為最終文件名，方便 CREATE_SPLIT_ARCHIVES 識別
+            mv "${DOWNLOAD_DIR}/${GAME_BUNDLE_ID}.apk" "${DOWNLOAD_DIR}/${GAME_SERVER}-Lite.apk"
+            PACKAGE_NAME="${GAME_SERVER}-Lite"
+            BUILD_TYPE="APK" # 臨時切換類型以適配 CREATE_SPLIT_ARCHIVES
+        else
+            REPACK_XAPK
+        fi
     else
         # APK构建流程
         DOWNLOAD_APKTOOL
